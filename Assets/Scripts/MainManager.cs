@@ -13,6 +13,7 @@ public class MainManager : MonoBehaviour
     public Text ScoreText;
     public GameObject GameOverText;
     public Text BestScoreText;
+    public GameObject DimmingPanel; // Panel to grey out background when the game is over
     
     private bool m_Started = false;
     private int m_Points;
@@ -23,7 +24,11 @@ public class MainManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        BestScoreText.text = $"Best Score: {DataManager.Instance.bestPlayerName}: {DataManager.Instance.HighScore}";
+        // Displaying best score and high score at the top of the screen in main scene
+        if (DataManager.Instance != null) 
+        {
+            BestScoreText.text = $"Best Score: {DataManager.Instance.bestPlayerName}: {DataManager.Instance.HighScore}";
+        }
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -38,6 +43,7 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+        DimmingPanel.SetActive(false);
     }
 
     private void Update()
@@ -74,10 +80,21 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
-        if (m_Points > DataManager.Instance.HighScore) 
+        DimmingPanel.SetActive(true);
+        if (DataManager.Instance != null)
         {
-            DataManager.Instance.HighScore = m_Points;
-            DataManager.Instance.SaveDataToFile();
+            // if player score is greater than best score save the name of the player and its score to the json file
+            if (m_Points > DataManager.Instance.HighScore)
+            {
+                DataManager.Instance.HighScore = m_Points;
+                DataManager.Instance.bestPlayerName = DataManager.Instance.playerName;
+                DataManager.Instance.SaveDataToFile();
+            }
         }
+    }
+
+    public void BackToMenu() 
+    {
+        SceneManager.LoadScene(0);
     }
 }

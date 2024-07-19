@@ -13,6 +13,7 @@ public class DataManager : MonoBehaviour
 
     private void Awake()
     {
+        // Debug.Log("Persistent Data Path: " + Application.persistentDataPath); 
         if (Instance != null)
         {
             Destroy(gameObject);
@@ -20,6 +21,9 @@ public class DataManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        // Loading best score and best player name from the json file if exists
+        // I guess it makes sense
         if (File.Exists(Application.persistentDataPath + "savefile.json"))
         {
             LoadDataFromFile();    
@@ -34,6 +38,7 @@ public class DataManager : MonoBehaviour
         public string BestPlayerName;
     }
 
+    // Saving best score and player name to the json file
     public void SaveDataToFile() 
     {
         SaveData data = new SaveData();
@@ -45,6 +50,7 @@ public class DataManager : MonoBehaviour
         File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
     }
 
+    // Loading best score and player name from the json file
     public void LoadDataFromFile()
     {
         string path = Application.persistentDataPath + "/savefile.json";
