@@ -14,6 +14,10 @@ public class MenuUIHandler : MonoBehaviour
 
     private void Start()
     {
+        if (DataManager.Instance.playerName != null)
+        {
+            nameInputField.text = DataManager.Instance.playerName;
+        }
         if (DataManager.Instance.bestPlayerName != null && DataManager.Instance.HighScore != 0) 
         {
             bestScoreText.gameObject.SetActive(true);
@@ -24,10 +28,15 @@ public class MenuUIHandler : MonoBehaviour
             bestScoreText.gameObject.SetActive(false);
         }
     }
+
+    public void GetPlayerName() 
+    {
+        DataManager.Instance.playerName = nameInputField.text;
+    }
     public void StartNew() 
     {
         // Loading player name from the input field and switching scene to main game
-        DataManager.Instance.playerName = nameInputField.text;
+        //DataManager.Instance.playerName = nameInputField.text;
         SceneManager.LoadScene(1);
     }
 
@@ -39,4 +48,11 @@ public class MenuUIHandler : MonoBehaviour
         Application.Quit();
 #endif
     }
+
+    public void Settings() 
+    {
+        SceneManager.LoadScene(2);
+    }
+    
+
 }
