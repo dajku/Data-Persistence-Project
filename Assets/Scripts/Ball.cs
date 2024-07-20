@@ -11,43 +11,48 @@ public class Ball : MonoBehaviour
 
     private void Awake()
     {
-        
-        DifficultyManager.Instance.LoadDataFromFile();
-        if (DifficultyManager.Instance.accelerationRate != 0 && DifficultyManager.Instance.maxVelocity != 0)
-        {
-            accelerationRate = DifficultyManager.Instance.accelerationRate;
-            maxVelocity = DifficultyManager.Instance.maxVelocity;
+        // Loading difficulty settings from difficulty.json file
+        if (DifficultyManager.Instance != null) 
+        { 
+            DifficultyManager.Instance.LoadDataFromFile();
+            if (DifficultyManager.Instance.accelerationRate != 0.01f && DifficultyManager.Instance.maxVelocity != 3.0f)
+            {
+                accelerationRate = DifficultyManager.Instance.accelerationRate;
+                maxVelocity = DifficultyManager.Instance.maxVelocity;
+            }
         }
+
     }
     void Start()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
-        Debug.Log(m_Rigidbody.velocity);
     }
     
     private void OnCollisionExit(Collision other)
     {
-        var velocity = m_Rigidbody.velocity;
-        Debug.Log(m_Rigidbody.velocity);
-        //after a collision we accelerate a bit
-        velocity += velocity.normalized * accelerationRate;
-        
-        //check if we are not going totally vertically as this would lead to being stuck, we add a little vertical force
-        if (Vector3.Dot(velocity.normalized, Vector3.up) < 0.1f)
+        if (m_Rigidbody != null)
         {
-            velocity += velocity.y > 0 ? Vector3.up * 0.5f : Vector3.down * 0.5f;
-        }
+            var velocity = m_Rigidbody.velocity;
+            //after a collision we accelerate a bit
+            velocity += velocity.normalized * accelerationRate;
 
-        //max velocity
-        if (velocity.magnitude > maxVelocity)
-        {
-            velocity = velocity.normalized * 3.0f;
-        }
+            //check if we are not going totally vertically as this would lead to being stuck, we add a little vertical force
+            if (Vector3.Dot(velocity.normalized, Vector3.up) < 0.1f)
+            {
+                velocity += velocity.y > 0 ? Vector3.up * 0.5f : Vector3.down * 0.5f;
+            }
 
-        m_Rigidbody.velocity = velocity;
+            //max velocity
+            if (velocity.magnitude > maxVelocity)
+            {
+                velocity = velocity.normalized * maxVelocity;
+            }
+
+            m_Rigidbody.velocity = velocity;
+        }
     }
 
-    public void SetMaxVelocity(float new_velocity) 
+/*    public void SetMaxVelocity(float new_velocity) 
     {
         maxVelocity = new_velocity;
     }
@@ -55,5 +60,5 @@ public class Ball : MonoBehaviour
     public void SetAccelerationRate(float new_acceleration) 
     {
         accelerationRate = new_acceleration;
-    }
+    }*/
 }

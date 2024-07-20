@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -14,16 +15,26 @@ public class MainManager : MonoBehaviour
     public GameObject GameOverText;
     public Text BestScoreText;
     public GameObject DimmingPanel; // Panel to grey out background when the game is over
+
+    public GameObject WinText;
+    public TextMeshProUGUI WinScoreText;
+    public TextMeshProUGUI CongratulationText;
+
+    public Paddle playerPaddle;
+
     
     private bool m_Started = false;
     private int m_Points;
     
     private bool m_GameOver = false;
+    
 
     
     // Start is called before the first frame update
     void Start()
     {
+        WinText.SetActive(false);
+        DimmingPanel.SetActive(false);
         // Displaying best score and high score at the top of the screen in main scene
         if (DataManager.Instance != null) 
         {
@@ -43,11 +54,16 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
-        DimmingPanel.SetActive(false);
+        
+        
     }
 
     private void Update()
     {
+        if (CountAllBricks() == 0)
+        {
+            GameWon();
+        }
         if (!m_Started)
         {
             if (Input.GetKeyDown(KeyCode.Space))
@@ -60,6 +76,7 @@ public class MainManager : MonoBehaviour
                 Ball.transform.SetParent(null);
                 Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
             }
+
         }
         else if (m_GameOver)
         {
@@ -93,8 +110,31 @@ public class MainManager : MonoBehaviour
         }
     }
 
+    public void GameWon() 
+    {
+        WinText.SetActive(true);
+        Ball.velocity = Vector3.zero;
+        if (playerPaddle != null) 
+        {
+            playerPaddle.enabled = false;
+        }
+        if (DataManager.Instance != null) 
+        {
+            CongratulationText.text = $"Congratulation! {DataManager.Instance.playerName}";
+        }
+        WinScoreText.text = $"Your score: {m_Points}";
+        DimmingPanel.SetActive(true);
+        WinText.SetActive(true);
+    }
     public void BackToMenu() 
     {
         SceneManager.LoadScene(0);
+    }
+
+    int CountAllBricks()
+    {
+        Brick[] allBricks = FindObjectsOfType<Brick>();
+        //Debug.Log($"Bricks count: {allBricks.Length}");
+        return allBricks.Length;
     }
 }
