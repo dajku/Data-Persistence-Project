@@ -33,6 +33,7 @@ public class MainManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("MainManager Start");
         WinText.SetActive(false);
         DimmingPanel.SetActive(false);
         // Displaying best score and high score at the top of the screen in main scene
@@ -129,6 +130,7 @@ public class MainManager : MonoBehaviour
     public void BackToMenu() 
     {
         SceneManager.LoadScene(0);
+        m_GameOver = false;
     }
 
     int CountAllBricks()

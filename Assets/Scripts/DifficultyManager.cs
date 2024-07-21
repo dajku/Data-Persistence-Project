@@ -17,18 +17,27 @@ public class DifficultyManager : MonoBehaviour
         if (Instance != null)
         {
             Destroy(gameObject);
+            Debug.Log("Instance already exists, destroying object");
             return;
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        Debug.Log("DifficultyManager Awake");
     }
- 
+
+    private void Start()
+    {
+        LoadDataFromFile();
+        Debug.Log("DifficultyManager Start");
+    }
+
 
     public void EasyDifficulty()
     {
         maxVelocity = 2.0f;
         accelerationRate = 0.005f;
         SaveDataToFile();
+        Debug.Log("Easy difficulty selected");
     }
 
     public void MediumDifficulty() 
@@ -36,6 +45,7 @@ public class DifficultyManager : MonoBehaviour
         maxVelocity = 3.0f;
         accelerationRate = 0.01f;
         SaveDataToFile();
+        Debug.Log("Medium difficulty selected");
     }
 
     public void HardDifficulty()
@@ -43,6 +53,7 @@ public class DifficultyManager : MonoBehaviour
         maxVelocity = 5.0f;
         accelerationRate = 0.1f;
         SaveDataToFile();
+        Debug.Log("Hard difficulty selected");
     }
 
 
@@ -54,14 +65,16 @@ public class DifficultyManager : MonoBehaviour
     }
     public void SaveDataToFile()
     {
+        
         SaveData data = new SaveData();
-
+        Debug.Log(data);
         data.selectedAccelerationRate = accelerationRate;
         data.selectedMaxVelocity = maxVelocity;
 
         string json = JsonUtility.ToJson(data);
 
         File.WriteAllText(Application.persistentDataPath + "/difficulty.json", json);
+        Debug.Log("Data saved: " + json);
     }
 
     public void LoadDataFromFile()
@@ -74,6 +87,11 @@ public class DifficultyManager : MonoBehaviour
 
             accelerationRate = data.selectedAccelerationRate;
             maxVelocity = data.selectedMaxVelocity;
+            Debug.Log("Data loaded: " + json);
+        }
+        else 
+        {
+            Debug.Log("Save file not found");
         }
 
     }

@@ -14,6 +14,7 @@ public class MenuUIHandler : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log("MenuUIHandler Start");
         if (DataManager.Instance.playerName != null)
         {
             nameInputField.text = DataManager.Instance.playerName;
